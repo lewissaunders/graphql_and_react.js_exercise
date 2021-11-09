@@ -1,24 +1,39 @@
-const githubQuery = (pageCount, queryString) => {
+const githubQuery = (
+  pageCount, 
+  queryString, 
+  paginationKeyword, 
+  paginationString
+  ) => {
   return {
     query: `
     {
       viewer {
         login
       }
-      search(query: "${queryString} user: lewissaunders sort: updated-desc", type: REPOSITORY, first: ${pageCount}) {
+      search(query: "${queryString} user: lewissaunders sort: updated-desc", type: REPOSITORY, ${paginationKeyword}: ${pageCount}, ${paginationString}) {
         repositoryCount
-        nodes {
-          ... on Repository {
-            name
-            description
-            id
-            url
-            viewerSubscription
-            licenseInfo {
-              spdxId
+        edges {
+          cursor
+          node {
+            ... on Repository {
+              name
+              description
+              id
+              url
+              viewerSubscription
+              licenseInfo {
+                spdxId
+              }
             }
           }
         }
+        pageInfo {
+          startCursor
+          endCursor
+          hasNextPage
+          hasPreviousPage
+        }
+        
       }
     }
     `,
